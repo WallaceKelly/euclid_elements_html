@@ -11,15 +11,31 @@ let readElement book section elementIndex (reader: XmlReader) =
     reader.MoveToContent() |> ignore
     let elementId = reader.GetAttribute("id")
     // printfn "%s" elementId
-    let doc = new XmlDocument()
-    doc.Load(reader) // XDocument.ReadFrom(reader)
+    let doc = new XmlDocument(PreserveWhitespace = true)
+    doc.Load(reader)
+
+    let summaryRaw =
+        doc.SelectSingleNode("/div3/div4[@type='Enunc']")
+        |> Option.ofObj
+        |> Option.map (fun s -> s.InnerXml)
+
+    let proofRaw =
+        doc.SelectSingleNode("/div3/div4[@type='Proof']")
+        |> Option.ofObj
+        |> Option.map (fun b -> b.InnerXml)
+
+    let conclusionRaw =
+        doc.SelectSingleNode("/div3/div4[@type='QED']")
+        |> Option.ofObj
+        |> Option.map (fun c -> c.InnerXml)
 
     { Index = elementIndex
       IdRaw = elementId
       Book = book
       Section = section
-      SummaryRaw = None
-      ConclusionRaw = None
+      SummaryRaw = summaryRaw
+      ProofRaw = proofRaw
+      ConclusionRaw = conclusionRaw
       BodyRaw = doc.OuterXml }
 
 let readSection book sectionIndex (reader: XmlReader) =

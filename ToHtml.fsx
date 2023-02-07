@@ -9,45 +9,30 @@ open Elements
 open System.IO
 open System.Xml
 
-let parseSummary (doc: XmlDocument) =
-    doc.SelectSingleNode("/div3/div4[@type='Enunc']")
-    |> Option.ofObj
-    |> Option.map (fun s -> s.InnerXml)
-
-let parseBody (doc: XmlDocument) =
-    doc.SelectSingleNode("/div3/div4[@type='Proof']")
-    |> Option.ofObj
-    |> Option.map (fun b -> b.InnerXml)
-
-let parseConclusion (doc: XmlDocument) =
-    doc.SelectSingleNode("/div3/div4[@type='QED']")
-    |> Option.ofObj
-    |> Option.map (fun c -> c.InnerXml)
-
 let generateHtml (e: Element) =
-    let doc = new XmlDocument()
-    doc.LoadXml(e.BodyRaw)
-    let summary = parseSummary doc |> Option.defaultValue "<!-- no summary -->"
-    let body = parseBody doc |> Option.defaultValue "<!-- no body -->"
-
-    let conclusion = parseConclusion doc |> Option.defaultValue "<!-- no conclusion -->"
+    let summary = e.SummaryRaw |> Option.defaultValue "<!-- no summary -->"
+    let proof = e.ProofRaw |> Option.defaultValue "<!-- no body -->"
+    let conclusion = e.ConclusionRaw |> Option.defaultValue "<!-- no conclusion -->"
 
     let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
 
     $"""
-        <div>
-            <h1>Book {bookRomanNumeral}.</h1>
-            <h2>{e.Section.SectionType} {e.Index}</h2>
-            <div>
-                {summary}
-            </div>
-            <div>
-                {body}
-            </div>
-            <div>
-                {conclusion}
-            </div>
-        </div>
+<div>
+    <h1>Book {bookRomanNumeral}.</h1>
+    <h2>{e.Section.SectionType} {e.Index}</h2>
+    <div>
+        {summary}
+    </div>
+    <div>
+        {proof}
+    </div>
+    <div>
+        {conclusion}
+    </div>
+</div>
+<!--
+{e.BodyRaw}
+-->
     """
 
 let createOutputFile (e: Element) =
