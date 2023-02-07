@@ -18,7 +18,9 @@ let readElement book section elementIndex (reader: XmlReader) =
       IdRaw = elementId
       Book = book
       Section = section
-      TextRaw = doc.OuterXml }
+      SummaryRaw = None
+      ConclusionRaw = None
+      BodyRaw = doc.OuterXml }
 
 let readSection book sectionIndex (reader: XmlReader) =
     seq {

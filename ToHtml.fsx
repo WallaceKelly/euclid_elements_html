@@ -26,12 +26,11 @@ let parseConclusion (doc: XmlDocument) =
 
 let generateHtml (e: Element) =
     let doc = new XmlDocument()
-    doc.LoadXml(e.TextRaw)
-    let summary = parseSummary doc |> Option.defaultValue "<!-- missing summary -->"
-    let body = parseBody doc |> Option.defaultValue "<!-- missing body -->"
+    doc.LoadXml(e.BodyRaw)
+    let summary = parseSummary doc |> Option.defaultValue "<!-- no summary -->"
+    let body = parseBody doc |> Option.defaultValue "<!-- no body -->"
 
-    let conclusion =
-        parseConclusion doc |> Option.defaultValue "<!-- missing conclusion -->"
+    let conclusion = parseConclusion doc |> Option.defaultValue "<!-- no conclusion -->"
 
     let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
 

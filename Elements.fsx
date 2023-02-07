@@ -9,4 +9,6 @@ type Element =
       IdRaw: string
       Book: Book
       Section: Section
-      TextRaw: string }
+      SummaryRaw: string option
+      ConclusionRaw: string option
+      BodyRaw: string }
