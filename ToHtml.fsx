@@ -26,19 +26,19 @@ let parseConclusion (doc: XmlDocument) =
 
 let generateHtml (e: Element) =
     let doc = new XmlDocument()
-    doc.LoadXml(e.textRaw)
+    doc.LoadXml(e.TextRaw)
     let summary = parseSummary doc |> Option.defaultValue "<!-- missing summary -->"
     let body = parseBody doc |> Option.defaultValue "<!-- missing body -->"
 
     let conclusion =
         parseConclusion doc |> Option.defaultValue "<!-- missing conclusion -->"
 
-    let bookRomanNumeral = BookNumber.toRomanNumeral e.book.number
+    let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
 
     $"""
         <div>
             <h1>Book {bookRomanNumeral}.</h1>
-            <h2>{e.section.sectionType} {e.index}</h2>
+            <h2>{e.Section.SectionType} {e.Index}</h2>
             <div>
                 {summary}
             </div>
@@ -53,13 +53,13 @@ let generateHtml (e: Element) =
 
 let createOutputFile (e: Element) =
     let b =
-        match e.book.number with
+        match e.Book.Number with
         | BookNumber b -> b
 
-    let p = e.index
+    let p = e.Index
 
     let s =
-        match e.section.sectionType with
+        match e.Section.SectionType with
         | Definition -> "def"
         | Proposition -> "prop"
         | CommonNotion -> "cn"

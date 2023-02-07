@@ -5,8 +5,8 @@ open Books
 open Sections
 
 type Element =
-    { index: int
-      idRaw: string
-      book: Book
-      section: Section
-      textRaw: string }
+    { Index: int
+      IdRaw: string
+      Book: Book
+      Section: Section
+      TextRaw: string }

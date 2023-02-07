@@ -14,11 +14,11 @@ let readElement book section elementIndex (reader: XmlReader) =
     let doc = new XmlDocument()
     doc.Load(reader) // XDocument.ReadFrom(reader)
 
-    { index = elementIndex
-      idRaw = elementId
-      book = book
-      section = section
-      textRaw = doc.OuterXml }
+    { Index = elementIndex
+      IdRaw = elementId
+      Book = book
+      Section = section
+      TextRaw = doc.OuterXml }
 
 let readSection book sectionIndex (reader: XmlReader) =
     seq {
@@ -28,9 +28,9 @@ let readSection book sectionIndex (reader: XmlReader) =
         let sectionType = SectionType.fromHeadTitle sectionTitle
 
         let section =
-            { index = sectionIndex
-              titleRaw = sectionTitle
-              sectionType = sectionType }
+            { Index = sectionIndex
+              TitleRaw = sectionTitle
+              SectionType = sectionType }
         // printfn "\t%s" sectionTitle
 
         while reader.ReadToFollowing("div3") do
@@ -46,8 +46,8 @@ let readBook bookIndex (reader: XmlReader) =
         let bookTitle = reader.ReadElementContentAsString()
         //printfn "%s" bookTitle
         let book =
-            { titleRaw = bookTitle
-              number = BookNumber bookIndex }
+            { TitleRaw = bookTitle
+              Number = BookNumber bookIndex }
 
         while reader.ReadToFollowing("div2") do
             sectionIndex <- sectionIndex + 1

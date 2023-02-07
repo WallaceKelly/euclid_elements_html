@@ -38,4 +38,4 @@ module BookNumber =
         |> Option.defaultWith (fun _ -> failwith $"Cannot parse roman numeral from '${str}'.")
 
 type Book =
-    { number: BookNumber; titleRaw: string }
+    { Number: BookNumber; TitleRaw: string }

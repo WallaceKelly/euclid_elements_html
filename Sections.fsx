@@ -14,6 +14,6 @@ module SectionType =
         | s -> failwith $"Could not parse section type for '{str}'."
 
 type Section =
-    { index: int
-      titleRaw: string
-      sectionType: SectionType }
+    { Index: int
+      TitleRaw: string
+      SectionType: SectionType }
