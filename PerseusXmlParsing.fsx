@@ -29,6 +29,14 @@ let readElement book section elementIndex (reader: XmlReader) =
         |> Option.ofObj
         |> Option.map (fun c -> c.InnerXml)
 
+    let definitionRaw =
+        if Option.isSome proofRaw then
+            None
+        else
+            doc.SelectSingleNode("/div3/p")
+            |> Option.ofObj
+            |> Option.map (fun c -> c.InnerXml)
+
     { Index = elementIndex
       IdRaw = elementId
       Book = book
@@ -36,6 +44,7 @@ let readElement book section elementIndex (reader: XmlReader) =
       SummaryRaw = summaryRaw
       ProofRaw = proofRaw
       ConclusionRaw = conclusionRaw
+      DefinitionRaw = definitionRaw
       BodyRaw = doc.OuterXml }
 
 let readSection book sectionIndex (reader: XmlReader) =

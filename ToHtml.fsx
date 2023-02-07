@@ -13,6 +13,7 @@ let generateHtml (e: Element) =
     let summary = e.SummaryRaw |> Option.defaultValue "<!-- no summary -->"
     let proof = e.ProofRaw |> Option.defaultValue "<!-- no body -->"
     let conclusion = e.ConclusionRaw |> Option.defaultValue "<!-- no conclusion -->"
+    let definition = e.DefinitionRaw |> Option.defaultValue "<!-- no definition -->"
 
     let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
 
@@ -20,6 +21,8 @@ let generateHtml (e: Element) =
 <div>
     <h1>Book {bookRomanNumeral}.</h1>
     <h2>{e.Section.SectionType} {e.Index}</h2>
+    <div>
+        {definition}
     <div>
         {summary}
     </div>

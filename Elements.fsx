@@ -12,4 +12,5 @@ type Element =
       SummaryRaw: string option
       ProofRaw: string option
       ConclusionRaw: string option
+      DefinitionRaw: string option
       BodyRaw: string }
