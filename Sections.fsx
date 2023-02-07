@@ -15,5 +15,5 @@ module SectionType =
 
 type Section =
     { index: int
-      title: string
+      titleRaw: string
       sectionType: SectionType }

@@ -35,8 +35,7 @@ module BookNumber =
             else
                 None)
         |> Seq.tryHead
-        |> function
-            | None -> failwith $"Cannot parse roman numeral from '${str}'"
-            | Some b -> b
+        |> Option.defaultWith (fun _ -> failwith $"Cannot parse roman numeral from '${str}'.")
 
-type Book = { number: BookNumber; title: string }
+type Book =
+    { number: BookNumber; titleRaw: string }

@@ -6,7 +6,7 @@ open Sections
 
 type Element =
     { index: int
-      id: string
+      idRaw: string
       book: Book
       section: Section
-      text: string }
+      textRaw: string }

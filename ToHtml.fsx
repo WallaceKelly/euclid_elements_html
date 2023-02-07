@@ -26,7 +26,7 @@ let parseConclusion (doc: XmlDocument) =
 
 let generateHtml (e: Element) =
     let doc = new XmlDocument()
-    doc.LoadXml(e.text)
+    doc.LoadXml(e.textRaw)
     let summary = parseSummary doc |> Option.defaultValue "<!-- missing summary -->"
     let body = parseBody doc |> Option.defaultValue "<!-- missing body -->"
 
