@@ -2,40 +2,78 @@
 #load "Sections.fsx"
 #load "Elements.fsx"
 #load "PerseusXmlParsing.fsx"
+#load "PerseusIds.fsx"
 
+open System.IO
+open System.Text.RegularExpressions
 open Books
 open Sections
 open Elements
-open System.IO
-open System.Xml
+
+let private regexReplace (pattern: string) (replacement: string) (input: string) =
+    Regex.Replace(input, pattern, replacement)
+
+let private regexReplaceWith (pattern: string) (replacement: MatchEvaluator) (input: string) =
+    Regex.Replace(input, pattern, replacement)
+
+let replaceWithReference (m: Match) =
+    let target = m.Groups[1].Value
+    let ref = m.Groups[2].Value
+    let htmlRef = PerseusIds.toHtmlRef target
+    $"<a class=\"perseus-ref\" href=\"{htmlRef}\">{ref}</a>"
+
+let cleanHtml (raw: string) =
+    raw
+    |> regexReplace "<figure />" ""
+    |> regexReplace "<emph>" "<span class=\"perseus-emph\">"
+    |> regexReplace "</emph>" "</span>"
+    |> regexReplace "<term>" "<span class=\"perseus-term\">"
+    |> regexReplace "</term>" "</span>"
+    |> regexReplace "<pb n=\"\d+\" />" ""
+    |> regexReplace "<lb n=\"\d+\" />" ""
+    |> regexReplace "<hi rend=\"center\">" "<div class=\"perseus-center\">"
+    |> regexReplace "</hi>" "</div>"
+    |> regexReplace "<p>" "<p class=\"perseus-p\">"
+    |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\. ]+)<\/ref>" replaceWithReference
 
 let generateHtml (e: Element) =
-    let summary = e.SummaryRaw |> Option.defaultValue "<!-- no summary -->"
-    let proof = e.ProofRaw |> Option.defaultValue "<!-- no body -->"
-    let conclusion = e.ConclusionRaw |> Option.defaultValue "<!-- no conclusion -->"
-    let definition = e.DefinitionRaw |> Option.defaultValue "<!-- no definition -->"
+    let summary =
+        e.SummaryRaw
+        |> Option.map cleanHtml
+        |> Option.defaultValue "<!-- no summary -->"
+
+    let proof =
+        e.ProofRaw |> Option.map cleanHtml |> Option.defaultValue "<!-- no body -->"
+
+    let conclusion =
+        e.ConclusionRaw
+        |> Option.map cleanHtml
+        |> Option.defaultValue "<!-- no conclusion -->"
+
+    let definition =
+        e.DefinitionRaw
+        |> Option.map cleanHtml
+        |> Option.defaultValue "<!-- no definition -->"
 
     let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
 
     $"""
-<div>
-    <h1>Book {bookRomanNumeral}.</h1>
-    <h2>{e.Section.SectionType} {e.Index}</h2>
-    <div>
+<div class="perseus-element">
+    <h1 class="perseus-book">Book {bookRomanNumeral}.</h1>
+    <h2 class="perseus-section">{e.Section.SectionType} {e.Index}</h2>
+    <div class="perseus-definition">
         {definition}
-    <div>
+    </div>
+    <div class="perseus-summary">
         {summary}
     </div>
-    <div>
+    <div class="perseus-proof">
         {proof}
     </div>
-    <div>
+    <div class="perseus-conclusion">
         {conclusion}
     </div>
 </div>
-<!--
-{e.BodyRaw}
--->
     """
 
 let createOutputFile (e: Element) =
@@ -50,7 +88,7 @@ let createOutputFile (e: Element) =
         | Definition -> "def"
         | Proposition -> "prop"
         | CommonNotion -> "cn"
-        | Postulate -> "pos"
+        | Postulate -> "post"
 
     let html = generateHtml e
 
@@ -60,7 +98,6 @@ let createOutputFile (e: Element) =
     Directory.CreateDirectory("html") |> ignore
 
     File.WriteAllText(filename, html)
-// File.AppendAllText(filename, $"\n\n{e.text}")
 
 PerseusXmlParsing.streamPropositions "./Perseus_text_1999.01.0086.xml"
 |> Seq.take 50

@@ -2,12 +2,14 @@
 #load "Sections.fsx"
 #load "Elements.fsx"
 
+open System
+open System.Linq
 open System.Xml
 open Books
 open Sections
 open Elements
 
-let readElement book section elementIndex (reader: XmlReader) =
+let private readElement book section elementIndex (reader: XmlReader) =
     reader.MoveToContent() |> ignore
     let elementId = reader.GetAttribute("id")
     // printfn "%s" elementId
@@ -33,9 +35,18 @@ let readElement book section elementIndex (reader: XmlReader) =
         if Option.isSome proofRaw then
             None
         else
-            doc.SelectSingleNode("/div3/p")
+            let excludedPhrases = [ "Let the following be postulated" ]
+
+            let isExcluded (s: string) =
+                excludedPhrases |> Seq.exists (fun p -> s.Contains(p))
+
+            doc.SelectNodes("/div3/p")
             |> Option.ofObj
-            |> Option.map (fun c -> c.InnerXml)
+            |> Option.map (fun ps ->
+                ps.Cast<XmlNode>()
+                |> Seq.map (fun p -> p.OuterXml)
+                |> Seq.filter (isExcluded >> not)
+                |> fun a -> String.Join("\n", a))
 
     { Index = elementIndex
       IdRaw = elementId
@@ -47,7 +58,7 @@ let readElement book section elementIndex (reader: XmlReader) =
       DefinitionRaw = definitionRaw
       BodyRaw = doc.OuterXml }
 
-let readSection book sectionIndex (reader: XmlReader) =
+let private readSection book sectionIndex (reader: XmlReader) =
     seq {
         let mutable elementIndex = 0
         reader.ReadToDescendant("head") |> ignore
@@ -66,7 +77,7 @@ let readSection book sectionIndex (reader: XmlReader) =
             yield readElement book section elementIndex element
     }
 
-let readBook bookIndex (reader: XmlReader) =
+let private readBook bookIndex (reader: XmlReader) =
     seq {
         let mutable sectionIndex = 0
         reader.ReadToDescendant("head") |> ignore
@@ -83,7 +94,7 @@ let readBook bookIndex (reader: XmlReader) =
             yield! readSection book sectionIndex section
     }
 
-let readBody (reader: XmlReader) =
+let private readBody (reader: XmlReader) =
     seq {
         let mutable bookIndex = 0
 
