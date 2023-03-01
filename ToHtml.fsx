@@ -42,6 +42,8 @@ let cleanHtml (raw: string) =
     |> regexReplace "</emph>" "</span>"
     |> regexReplace "<term>" "<span class=\"perseus-term\">"
     |> regexReplace "</term>" "</span>"
+    |> regexReplace "<title>" "<span class=\"perseus-title\">"
+    |> regexReplace "</title>" "</span>"
     |> regexReplace "<pb n=\"\d+\" />" ""
     |> regexReplace "<lb n=\"\d+\" />" ""
     |> regexReplace "<hi rend=\"center\">" "<div class=\"perseus-center\">"
