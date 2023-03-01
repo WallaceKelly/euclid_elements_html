@@ -6,6 +6,7 @@
 
 open System.IO
 open System.Text.RegularExpressions
+open System.Xml
 open Books
 open Sections
 open Elements
@@ -22,6 +23,18 @@ let replaceWithReference (m: Match) =
     let htmlRef = PerseusIds.toHtmlRef target
     $"<a class=\"perseus-ref\" href=\"{htmlRef}\">{ref}</a>"
 
+let private failOnUnrecognizedElement (input: string) =
+    let recognizedElements = [ "div"; "p"; "span"; "a"; "h1"; "h2"; "h3" ]
+    use rdr = XmlReader.Create(new StringReader($"<div>{input}</div>"))
+
+
+    while rdr.Read() do
+        if rdr.NodeType = XmlNodeType.Element then
+            if not (Seq.contains rdr.Name recognizedElements) then
+                failwith $"Unrecognized element '{rdr.Name}'"
+
+    input
+
 let cleanHtml (raw: string) =
     raw
     |> regexReplace "<figure />" ""
@@ -35,6 +48,7 @@ let cleanHtml (raw: string) =
     |> regexReplace "</hi>" "</div>"
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
     |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\. ]+)<\/ref>" replaceWithReference
+    |> failOnUnrecognizedElement
 
 let generateHtml (e: Element) =
     let summary =
