@@ -47,6 +47,8 @@ let cleanHtml (raw: string) =
     |> regexReplace "<pb n=\"\d+\" />" ""
     |> regexReplace "<lb n=\"\d+\" />" ""
     |> regexReplace "<hi rend=\"center\">" "<div class=\"perseus-center\">"
+    |> regexReplace "<hi rend=\"bold\">" "<div class=\"perseus-bold\">"
+    |> regexReplace "<hi rend=\"ital\">" "<div class=\"perseus-ital\">"
     |> regexReplace "</hi>" "</div>"
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
     |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\. ]+)<\/ref>" replaceWithReference
@@ -116,5 +118,6 @@ let createOutputFile (e: Element) =
     File.WriteAllText(filename, html)
 
 PerseusXmlParsing.streamPropositions "./Perseus_text_1999.01.0086.xml"
+|> Seq.skip 50
 |> Seq.take 50
 |> Seq.iter createOutputFile
