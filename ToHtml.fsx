@@ -25,6 +25,10 @@ let replaceWithReference (m: Match) =
     let htmlRef = PerseusIds.toHtmlRef target
     $"<a class=\"perseus-ref\" href=\"{htmlRef}\">{ref}</a>"
 
+let replaceWithForeignSpan (m: Match) =
+    let lang = m.Groups[1].Value
+    $"<span class=\"perseus-foreign-{lang}\">"
+
 let private removeNodesByName (name: string) (input: string) =
     let xDoc = XDocument.Parse($"<div>{input}</div>", LoadOptions.PreserveWhitespace)
     xDoc.Descendants().Where(fun d -> d.Name.LocalName = name).Remove()
@@ -60,6 +64,8 @@ let cleanHtml (raw: string) =
     |> regexReplace "</hi>" "</div>"
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
     |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\., ]+)<\/ref>" replaceWithReference
+    |> regexReplaceWith "<foreign lang=\"([\w]+)\">" replaceWithForeignSpan
+    |> regexReplace "</foreign>" "</span>"
     |> removeNodesByName "note"
     |> failOnUnrecognizedElement
 
