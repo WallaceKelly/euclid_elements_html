@@ -28,11 +28,18 @@ let toHtmlRef (s: string) =
         let def = Int32.Parse(m.Groups[2].Value)
         $"book%02d{book}def%02d{def}"
 
+    // TODO: create a link to the porism within the document
+    let porism (m: Match) =
+        let book = Int32.Parse(m.Groups[1].Value)
+        let prop = Int32.Parse(m.Groups[2].Value)
+        $"book%02d{book}prop%02d{prop}"
+
     let regexes =
         [ ("^elem\.(\d+)\.(\d+)$", proposition)
           ("^elem\.(\d+)\.c.n.(\d+)$", commonNotion)
           ("^elem\.(\d+)\.post\.(\d+)$", postulate)
-          ("^elem\.(\d+)\.def\.(\d+)$", definition) ]
+          ("^elem\.(\d+)\.def\.(\d+)$", definition)
+          ("^elem\.(\d+)\.(\d+).p.(\d+)$", porism) ]
 
     regexes
     |> Seq.map (fun (regex, convert) ->
