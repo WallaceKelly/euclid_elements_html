@@ -43,7 +43,7 @@ let private failOnUnrecognizedElement (input: string) =
     while rdr.Read() do
         if rdr.NodeType = XmlNodeType.Element then
             if not (Seq.contains rdr.Name recognizedElements) then
-                failwith $"Unrecognized element '{rdr.Name}'"
+                failwith $"Unrecognized element '{rdr.Name}' in\n{input}"
 
     input
 
@@ -133,6 +133,6 @@ let createOutputFile (e: Element) =
     File.WriteAllText(filename, html)
 
 PerseusXmlParsing.streamPropositions "./Perseus_text_1999.01.0086.xml"
-|> Seq.skip 100
+|> Seq.skip 300
 |> Seq.take 100
 |> Seq.iter createOutputFile
