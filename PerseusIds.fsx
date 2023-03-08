@@ -34,12 +34,19 @@ let toHtmlRef (s: string) =
         let prop = Int32.Parse(m.Groups[2].Value)
         $"book%02d{book}prop%02d{prop}"
 
+    // TODO: create a link to the lemma within the document
+    let lemma (m: Match) =
+        let book = Int32.Parse(m.Groups[1].Value)
+        let prop = Int32.Parse(m.Groups[2].Value)
+        $"book%02d{book}prop%02d{prop}"
+
     let regexes =
         [ ("^elem\.(\d+)\.(\d+)$", proposition)
           ("^elem\.(\d+)\.c.n.(\d+)$", commonNotion)
           ("^elem\.(\d+)\.post\.(\d+)$", postulate)
           ("^elem\.(\d+)\.def\.(\d+)$", definition)
-          ("^elem\.(\d+)\.(\d+).p.(\d+)$", porism) ]
+          ("^elem\.(\d+)\.(\d+).p.(\d+)$", porism) 
+          ("^elem\.(\d+)\.(\d+).l.(\d+)$", lemma) ]
 
     regexes
     |> Seq.map (fun (regex, convert) ->
