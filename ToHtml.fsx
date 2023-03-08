@@ -63,6 +63,8 @@ let cleanHtml (raw: string) =
     |> regexReplace "<hi rend=\"ital\">" "<div class=\"perseus-ital\">"
     |> regexReplace "</hi>" "</div>"
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
+    |> regexReplace "<quote>" "“"
+    |> regexReplace "</quote>" "”"
     |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\.,\- ]+)<\/ref>" replaceWithReference
     |> regexReplaceWith "<foreign lang=\"([\w]+)\">" replaceWithForeignSpan
     |> regexReplace "</foreign>" "</span>"
