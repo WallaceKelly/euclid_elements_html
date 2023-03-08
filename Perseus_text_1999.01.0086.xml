@@ -7607,9 +7607,7 @@
       <p>For from the odd number <hi rend="ital">AB</hi> let the even number <hi rend="ital">BC</hi> be subtracted; I say that the remainder <hi rend="ital">CA</hi> is odd. <figure />
       </p>
       <p>Let the unit <hi rend="ital">AD</hi> be subtracted; therefore <hi rend="ital">DB</hi> is even. [<ref target="elem.7.def.7" targOrder="U">VII. Def. 7</ref>] </p>
-      <p>But <hi rend="ital">BC</hi> is also even; therefore the remainder <hi rend="ital">CD</hi> is even. [<ref target="elem.9.24" targOrder="U">
-        <ref target="elem.9.24" targOrder="U">IX. 24</ref>
-       </ref>] </p>
+      <p>But <hi rend="ital">BC</hi> is also even; therefore the remainder <hi rend="ital">CD</hi> is even. [<ref target="elem.9.24" targOrder="U">IX. 24</ref>] </p>
       <p>Therefore <hi rend="ital">CA</hi> is odd. [<ref target="elem.7.def.7" targOrder="U">VII. Def. 7</ref>] Q. E. D.</p>
      </div3>
      <div3 id="elem.9.28" n="28" type="number" org="uniform" sample="complete">
