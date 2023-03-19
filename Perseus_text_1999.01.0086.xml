@@ -2919,7 +2919,7 @@
       <p>But the triangle <emph>ABC</emph> is equal to the triangle <emph>DCE</emph>; <hi rend="center">therefore the triangle <emph>DCE</emph> is also equal to the triangle <emph>FCE</emph>, [<ref target="elem.1.c.n.1" targOrder="U">C.N. 1</ref>] the greater to the less: which is impossible. Therefore <emph>AF</emph> is not parallel to <emph>BE</emph>.</hi>
        <pb n="338" /></p>
       <p>Similarly we can prove that neither is any other straight line except <emph>AD</emph>; <hi rend="center">therefore <emph>AD</emph> is parallel to <emph>BE</emph>.</hi></p>
-      <p>Therefore etc. Q. E. D.]</p>
+      <p>Therefore etc. Q. E. D.</p>
      </div3>
      <div3 id="elem.1.41" n="41" type="number" org="uniform" sample="complete">
       <head>Proposition 41.</head>
@@ -3713,7 +3713,7 @@
       <p>But <emph>FA</emph> was also proved equal to <emph>FC</emph>; <lb n="20" /><hi rend="center">therefore <emph>FA</emph>, <emph>AG</emph> are equal to <emph>FC</emph>, <emph>GD</emph>, so that the whole <emph>FG</emph> is greater than <emph>FA</emph>, <emph>AG</emph>;</hi> but it is also less [<ref target="elem.1.20" targOrder="U">I. 20</ref>]: which is impossible. </p>
       <p>Therefore the straight line joined from <emph>F</emph> to <emph>G</emph> will not fail to pass through the point of contact at <emph>A</emph>; <lb n="25" /><hi rend="center">therefore it will pass through it.</hi>
       </p>
-      <p>Therefore etc. Q. E. D.]
+      <p>Therefore etc. Q. E. D.
 <note n="23" type="crit" place="unspecified" anchored="yes">
         <p><hi rend="bold">will not fail to pass</hi>. The Greek has the double negative, <foreign lang="greek">ou)k a)/ra h(...eu)qei=a... ou)k e)leu/setai</foreign>, literally <quote>the straight line...will not <emph>not</emph>-pass....</quote>
 </p>
@@ -9075,7 +9075,7 @@ and, <foreign lang="la">componendo</foreign>, the squares on <hi rend="ital">AB<
        <p>Let <hi rend="ital">AB</hi> be a straight line, and let it be cut into unequal parts at <hi rend="ital">C</hi>, and let <hi rend="ital">AC</hi> be the greater; I say that the squares on <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> are greater than twice the rectangle <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi>. <pb n="132" /></p>
        <p>For let <hi rend="ital">AB</hi> be bisected at <hi rend="ital">D</hi>. </p>
        <p>Since then a straight line has been cut into equal parts at <hi rend="ital">D</hi>, and into unequal parts at <hi rend="ital">C</hi>, therefore the rectangle <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> together with the square on <hi rend="ital">CD</hi> is equal to the square on <hi rend="ital">AD</hi>, [<ref target="elem.2.5" targOrder="U">II. 5</ref>] so that the rectangle <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> is less than double of the square on <hi rend="ital">AD</hi>. </p>
-       <p>But the squares on <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> are double of the squares on <hi rend="ital">AD</hi>, <hi rend="ital">DC</hi>; [<ref target="elem.2.9" targOrder="U">II. 9</ref>] therefore the squares on <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> are greater than twice the rectangle <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi>. Q. E. D.]</p>
+       <p>But the squares on <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> are double of the squares on <hi rend="ital">AD</hi>, <hi rend="ital">DC</hi>; [<ref target="elem.2.9" targOrder="U">II. 9</ref>] therefore the squares on <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi> are greater than twice the rectangle <hi rend="ital">AC</hi>, <hi rend="ital">CB</hi>. Q. E. D.</p>
       </div4>
      </div3>
      <div3 id="elem.10.60" n="60" type="number" org="uniform" sample="complete">
