@@ -20,22 +20,22 @@ let private regexReplace (pattern: string) (replacement: string) (input: string)
 let private regexReplaceWith (pattern: string) (replacement: MatchEvaluator) (input: string) =
     Regex.Replace(input, pattern, replacement)
 
-let replaceWithReference (m: Match) =
+let private replaceWithReference (m: Match) =
     let target = m.Groups[1].Value
     let ref = m.Groups[2].Value
     let htmlRef = PerseusIds.toHtmlRef target
     $"<a class=\"perseus-ref\" href=\"{htmlRef}\">{ref}</a>"
 
-let replaceWithForeignSpan (m: Match) =
+let private replaceWithForeignSpan (m: Match) =
     let lang = m.Groups[1].Value
     $"<span class=\"perseus-foreign-{lang}\">"
 
-let replaceWithHiSpan (m: Match) =
+let private replaceHiWithSpan (m: Match) =
     let style = m.Groups[1].Value
     let text = m.Groups[2].Value
     $"<span class=\"perseus-{style}\">{text}</span>"
 
-let replaceWithHiDiv (m: Match) =
+let private replaceHiWithDiv (m: Match) =
     let text = m.Groups[1].Value
     $"<div class=\"perseus-center\">{text}</div>"
 
@@ -86,8 +86,8 @@ let cleanHtml (raw: string) =
     // |> regexReplace "<hi rend=\"bold\">" "<div class=\"perseus-bold\">"
     // |> regexReplace "<hi rend=\"ital\">" "<div class=\"perseus-ital\">"
     // |> regexReplace "</hi>" "</div>"
-    |> regexReplaceWith "<hi rend=\"(bold|italics)\">([\w.]+)</hi>" replaceWithHiSpan
-    |> regexReplaceWith "<hi rend=\"center\">(.+)</hi>" replaceWithHiDiv
+    |> regexReplaceWith "<hi rend=\"(bold|italics)\">([\w.]+)</hi>" replaceHiWithSpan
+    |> regexReplaceWith "<hi rend=\"center\">(.+)</hi>" replaceHiWithDiv
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
     |> regexReplace "<quote>" "“"
     |> regexReplace "</quote>" "”"
