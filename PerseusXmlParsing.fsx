@@ -1,15 +1,17 @@
 #load "Books.fsx"
 #load "Sections.fsx"
 #load "Elements.fsx"
+#load "PerseusIds.fsx"
 
 open System
 open System.Linq
+// open System.Text.RegularExpressions
 open System.Xml
 open Books
 open Sections
 open Elements
 
-let private readElement book section elementIndex (reader: XmlReader) =
+let private readElementOrig book section elementIndex (reader: XmlReader) =
     reader.MoveToContent() |> ignore
     let elementId = reader.GetAttribute("id")
     // printfn "%s" elementId
@@ -58,7 +60,25 @@ let private readElement book section elementIndex (reader: XmlReader) =
       DefinitionRaw = definitionRaw
       BodyRaw = doc.OuterXml }
 
-let private readSection book sectionIndex (reader: XmlReader) =
+let private readElement (reader: XmlReader) =
+    reader.MoveToContent() |> ignore
+    let doc = new XmlDocument(PreserveWhitespace = true)
+    doc.Load(reader)
+    let div3 = doc.SelectSingleNode("/div3")
+    let elementId = div3.Attributes.GetNamedItem("id").Value
+    let (bookNum, elemNum, sectId, sectNum) = PerseusIds.parseElementId elementId
+
+    { Index = elemNum
+      IdRaw = elementId
+      Book = Book.fromInt bookNum
+      Section = Section.create sectId sectNum
+      SummaryRaw = None // summaryRaw
+      ProofRaw = Some (doc.InnerXml)
+      ConclusionRaw = None // conclusionRaw
+      DefinitionRaw = None // definitionRaw
+      BodyRaw = doc.OuterXml }
+
+let private readSectionOrig book sectionIndex (reader: XmlReader) =
     seq {
         let mutable elementIndex = 0
         reader.ReadToDescendant("head") |> ignore
@@ -74,10 +94,10 @@ let private readSection book sectionIndex (reader: XmlReader) =
         while reader.ReadToFollowing("div3") do
             elementIndex <- elementIndex + 1
             use element = reader.ReadSubtree()
-            yield readElement book section elementIndex element
+            yield readElementOrig book section elementIndex element
     }
 
-let private readBook bookIndex (reader: XmlReader) =
+let private readBookOrig bookIndex (reader: XmlReader) =
     seq {
         let mutable sectionIndex = 0
         reader.ReadToDescendant("head") |> ignore
@@ -91,17 +111,34 @@ let private readBook bookIndex (reader: XmlReader) =
             sectionIndex <- sectionIndex + 1
             use section = reader.ReadSubtree()
 
-            yield! readSection book sectionIndex section
+            yield! readSectionOrig book sectionIndex section
     }
 
-let private readBody (reader: XmlReader) =
+let private readBodyOrig (reader: XmlReader) =
     seq {
         let mutable bookIndex = 0
 
         while reader.ReadToFollowing("div1") do
             bookIndex <- bookIndex + 1
             use book = reader.ReadSubtree()
-            yield! readBook bookIndex book
+            yield! readBookOrig bookIndex book
+    }
+
+let private readElements (reader: XmlReader) =
+    seq {
+        while reader.ReadToFollowing("div3") do
+            let idString = reader.GetAttribute("id")
+            if PerseusIds.isElementId idString then
+                yield (readElement <| reader.ReadSubtree())
+    }
+
+let streamPropositionsOrig uri =
+    seq {
+        use reader = XmlReader.Create(uri: string)
+        reader.MoveToContent() |> ignore
+        reader.ReadToFollowing("body") |> ignore
+        use body = reader.ReadSubtree()
+        yield! readBodyOrig body
     }
 
 let streamPropositions uri =
@@ -110,5 +147,5 @@ let streamPropositions uri =
         reader.MoveToContent() |> ignore
         reader.ReadToFollowing("body") |> ignore
         use body = reader.ReadSubtree()
-        yield! readBody body
+        yield! readElements body
     }

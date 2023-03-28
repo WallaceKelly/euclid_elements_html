@@ -3,6 +3,8 @@ type SectionType =
     | CommonNotion
     | Postulate
     | Proposition
+    | Lemma
+    | Porism
 
 module SectionType =
     let fromHeadTitle (str: string) =
@@ -17,3 +19,21 @@ type Section =
     { Index: int
       TitleRaw: string
       SectionType: SectionType }
+
+module Section =
+
+    let create sectId sectNum =
+        let sectionType =
+            match sectId with
+            | s when System.String.IsNullOrWhiteSpace(s) -> Proposition
+            | s when s = "prop" -> Proposition
+            | s when s = "pos" -> Postulate
+            | s when s = "def" -> Definition
+            | s when s = "c.n." -> CommonNotion
+            | s when s = "l" -> Lemma
+            | s when s = "p" -> Porism
+            | _ -> failwith $"The section id \'{sectId}\' is not recognized."
+
+        { Index = sectNum
+          TitleRaw = ""
+          SectionType = sectionType }        

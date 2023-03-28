@@ -6,12 +6,13 @@
 
 open System.IO
 open System.Text.RegularExpressions
-open System.Xml
-open Books
-open Sections
-open Elements
 open System.Linq
 open System.Xml.Linq
+open System.Xml
+
+open Books
+open Elements
+open Sections
 
 let private regexReplace (pattern: string) (replacement: string) (input: string) =
     Regex.Replace(input, pattern, replacement)
@@ -29,7 +30,17 @@ let replaceWithForeignSpan (m: Match) =
     let lang = m.Groups[1].Value
     $"<span class=\"perseus-foreign-{lang}\">"
 
+let replaceWithHiSpan (m: Match) =
+    let style = m.Groups[1].Value
+    let text = m.Groups[2].Value
+    $"<span class=\"perseus-{style}\">{text}</span>"
+
+let replaceWithHiDiv (m: Match) =
+    let text = m.Groups[1].Value
+    $"<div class=\"perseus-center\">{text}</div>"
+
 let private removeNodesByName (name: string) (input: string) =
+    // printfn "%s" input
     let xDoc = XDocument.Parse($"<div>{input}</div>", LoadOptions.PreserveWhitespace)
     xDoc.Descendants().Where(fun d -> d.Name.LocalName = name).Remove()
     let result = xDoc.ToString(SaveOptions.DisableFormatting)
@@ -38,7 +49,6 @@ let private removeNodesByName (name: string) (input: string) =
 let private failOnUnrecognizedElement (input: string) =
     let recognizedElements = [ "div"; "p"; "span"; "a"; "h1"; "h2"; "h3" ]
     use rdr = XmlReader.Create(new StringReader($"<div>{input}</div>"))
-
 
     while rdr.Read() do
         if rdr.NodeType = XmlNodeType.Element then
@@ -49,6 +59,18 @@ let private failOnUnrecognizedElement (input: string) =
 
 let cleanHtml (raw: string) =
     raw
+    |> regexReplace "<div3 " "<div class=\"perseus-div3\" "
+    |> regexReplace "</div3>" "</div>"
+    |> regexReplace "</div3>" "</div>"
+    |> regexReplace "<div4 .*type=\"Enunc\"" "<div class=\"perseus-enunc\""
+    |> regexReplace "<div4 .*type=\"Proof\"" "<div class=\"perseus-proof\""
+    |> regexReplace "<div4 .*type=\"QED\"" "<div class=\"perseus-qed\""
+    |> regexReplace "<div4 .*type=\"porism\"" "<div class=\"perseus-porism\""
+    |> regexReplace "<div4 .*type=\"lemma\"" "<div class=\"perseus-lemma\""
+    |> regexReplace "</div4>" "</div>"
+    // |> regexReplace "<head>" "<div class=\"perseus-head\">"
+    // |> regexReplace "</head>" "</div>"
+    |> removeNodesByName "head"
     |> regexReplace "<figure />" ""
     |> regexReplace "<emph>" "<span class=\"perseus-emph\">"
     |> regexReplace "</emph>" "</span>"
@@ -56,17 +78,21 @@ let cleanHtml (raw: string) =
     |> regexReplace "</term>" "</span>"
     |> regexReplace "<title>" "<span class=\"perseus-title\">"
     |> regexReplace "</title>" "</span>"
+    |> regexReplace "<trailer>" "<span class=\"perseus-trailer\">"
+    |> regexReplace "</trailer>" "</span>"
     |> regexReplace "<pb n=\"\d+\" />" ""
     |> regexReplace "<lb n=\"\d+\" />" ""
-    |> regexReplace "<hi rend=\"center\">" "<div class=\"perseus-center\">"
-    |> regexReplace "<hi rend=\"bold\">" "<div class=\"perseus-bold\">"
-    |> regexReplace "<hi rend=\"ital\">" "<div class=\"perseus-ital\">"
-    |> regexReplace "</hi>" "</div>"
+    // |> regexReplace "<hi rend=\"center\">" "<div class=\"perseus-center\">"
+    // |> regexReplace "<hi rend=\"bold\">" "<div class=\"perseus-bold\">"
+    // |> regexReplace "<hi rend=\"ital\">" "<div class=\"perseus-ital\">"
+    // |> regexReplace "</hi>" "</div>"
+    |> regexReplaceWith "<hi rend=\"(bold|italics)\">([\w.]+)</hi>" replaceWithHiSpan
+    |> regexReplaceWith "<hi rend=\"center\">(.+)</hi>" replaceWithHiDiv
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
     |> regexReplace "<quote>" "“"
     |> regexReplace "</quote>" "”"
     |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\.,\- ]+)<\/ref>" replaceWithReference
-    |> regexReplaceWith "<foreign lang=\"([\w]+)\">" replaceWithForeignSpan
+    |> regexReplaceWith "<foreign lang=\"(\w+)\">" replaceWithForeignSpan
     |> regexReplace "</foreign>" "</span>"
     |> removeNodesByName "note"
     |> failOnUnrecognizedElement
@@ -77,64 +103,74 @@ let generateHtml (e: Element) =
         |> Option.map cleanHtml
         |> Option.defaultValue "<!-- no summary -->"
 
-    let proof =
-        e.ProofRaw |> Option.map cleanHtml |> Option.defaultValue "<!-- no body -->"
+    // let proof =
+    e.ProofRaw |> Option.map cleanHtml |> Option.defaultValue "<!-- no body -->"
 
-    let conclusion =
-        e.ConclusionRaw
-        |> Option.map cleanHtml
-        |> Option.defaultValue "<!-- no conclusion -->"
+    // let conclusion =
+    //     e.ConclusionRaw
+    //     |> Option.map cleanHtml
+    //     |> Option.defaultValue "<!-- no conclusion -->"
 
-    let definition =
-        e.DefinitionRaw
-        |> Option.map cleanHtml
-        |> Option.defaultValue "<!-- no definition -->"
+    // let definition =
+    //     e.DefinitionRaw
+    //     |> Option.map cleanHtml
+    //     |> Option.defaultValue "<!-- no definition -->"
 
-    let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
+    // let bookRomanNumeral = BookNumber.toRomanNumeral e.Book.Number
 
-    $"""
-<div class="perseus-element">
-    <h1 class="perseus-book">Book {bookRomanNumeral}.</h1>
-    <h2 class="perseus-section">{e.Section.SectionType} {e.Index}</h2>
-    <div class="perseus-definition">
-        {definition}
-    </div>
-    <div class="perseus-summary">
-        {summary}
-    </div>
-    <div class="perseus-proof">
-        {proof}
-    </div>
-    <div class="perseus-conclusion">
-        {conclusion}
-    </div>
-</div>
-    """
+    // <h1 class="perseus-book">Book {bookRomanNumeral}.</h1>
+    // <h2 class="perseus-section">{e.Section.SectionType} {e.Index}</h2>
+    // <div class="perseus-definition">
+    //     {definition}
+    // </div>
+    // <div class="perseus-summary">
+    //     {summary}
+    // </div>
+    // <div class="perseus-conclusion">
+    //     {conclusion}
+    // </div>
+    // <div class="perseus-proof">
+    // </div>
+//     $"""
+// <div class="perseus-element">
+//         {proof}
+// </div>
+//     """
 
 let createOutputFile (e: Element) =
-    let b =
-        match e.Book.Number with
-        | BookNumber b -> b
+    try
+        let b =
+            match e.Book.Number with
+            | BookNumber b -> b
 
-    let p = e.Index
+        // let p = e.Index
+        let p = if e.Index = 0 then e.Section.Index else e.Index
 
-    let s =
-        match e.Section.SectionType with
-        | Definition -> "def"
-        | Proposition -> "prop"
-        | CommonNotion -> "cn"
-        | Postulate -> "post"
+        let s =
+            match e.Section.SectionType with
+            | Definition -> "def"
+            | Proposition -> "prop"
+            | CommonNotion -> "cn"
+            | Postulate -> "post"
+            | Lemma -> "lemma"
+            | Porism -> "porism"
 
-    let html = generateHtml e
+        let html = generateHtml e
 
-    let filename = $"html/book%02d{b}%s{s}%02d{p}.html"
-    printfn "%s" filename
+        let filename = $"html/book%02d{b}%s{s}%02d{p}.html"
+        printfn "%s" filename
 
-    Directory.CreateDirectory("html") |> ignore
+        Directory.CreateDirectory("html") |> ignore
 
-    File.WriteAllText(filename, html)
+        File.WriteAllText(filename, html)
+
+    with ex ->
+        printfn "%s" ex.Message
+        printfn "----"
+        printfn "%A" e.ProofRaw
+        reraise ()
 
 PerseusXmlParsing.streamPropositions "./Perseus_text_1999.01.0086.xml"
-|> Seq.skip 400
-|> Seq.take 100
+// |> Seq.skip 0
+// |> Seq.take 100
 |> Seq.iter createOutputFile

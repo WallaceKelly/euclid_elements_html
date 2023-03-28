@@ -39,3 +39,12 @@ module BookNumber =
 
 type Book =
     { Number: BookNumber; TitleRaw: string }
+
+module Book =
+
+    let fromInt n =
+        let bookNumber = BookNumber.fromInt n
+        let bookTitle = $"Book {BookNumber.toRomanNumeral bookNumber}"
+        { Number = bookNumber
+          TitleRaw = bookTitle }
+

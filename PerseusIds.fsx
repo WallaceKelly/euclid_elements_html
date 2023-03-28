@@ -6,6 +6,22 @@ module PerseusIds
 open System
 open System.Text.RegularExpressions
 
+let private IdRegex = "^elem\.(\d+)\.(\d+|def|p|l|c\.n\.|pos)\.*(\d+)*$"
+
+let isElementId (s: string) =
+    (not (isNull s)) && Regex.IsMatch(s, IdRegex)
+
+let parseElementId (s: string) =
+    if not <| isElementId s then
+        failwith $"{s} is not an element id."
+    else
+        let m = Regex.Match(s, IdRegex)
+        let bookNum = Int32.Parse(m.Groups[1].Value)
+        let (isProposition, elemNum) = Int32.TryParse(m.Groups[2].Value)
+        let sectId = if isProposition then "prop" else m.Groups[2].Value
+        let (_, sectNum) = Int32.TryParse(m.Groups[3].Value)
+        (bookNum, elemNum, sectId, sectNum)
+
 let toHtmlRef (s: string) =
 
     let proposition (m: Match) =
