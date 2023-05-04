@@ -27,7 +27,7 @@ module Section =
             match sectId with
             | s when System.String.IsNullOrWhiteSpace(s) -> Proposition
             | s when s = "prop" -> Proposition
-            | s when s = "pos" -> Postulate
+            | s when s = "post" -> Postulate
             | s when s = "def" -> Definition
             | s when s = "c.n." -> CommonNotion
             | s when s = "l" -> Lemma

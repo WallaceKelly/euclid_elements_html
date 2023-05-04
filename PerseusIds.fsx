@@ -6,7 +6,7 @@ module PerseusIds
 open System
 open System.Text.RegularExpressions
 
-let private IdRegex = "^elem\.(\d+)\.(\d+|def|p|l|c\.n\.|pos)\.*(\d+)*$"
+let private IdRegex = "^elem\.(\d+)\.(\d+|def|p|l|c\.n\.|post)\.*(\d+)*$"
 
 let isElementId (s: string) =
     (not (isNull s)) && Regex.IsMatch(s, IdRegex)
