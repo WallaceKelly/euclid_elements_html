@@ -62,11 +62,11 @@ let cleanHtml (raw: string) =
     |> regexReplace "<div3 " "<div class=\"perseus-div3\" "
     |> regexReplace "</div3>" "</div>"
     |> regexReplace "</div3>" "</div>"
-    |> regexReplace "<div4 .*type=\"Enunc\"" "<div class=\"perseus-enunc\""
-    |> regexReplace "<div4 .*type=\"Proof\"" "<div class=\"perseus-proof\""
-    |> regexReplace "<div4 .*type=\"QED\"" "<div class=\"perseus-qed\""
-    |> regexReplace "<div4 .*type=\"porism\"" "<div class=\"perseus-porism\""
-    |> regexReplace "<div4 .*type=\"lemma\"" "<div class=\"perseus-lemma\""
+    |> regexReplace "<div4 .*?type=\"Enunc\"" "<div class=\"perseus-enunc\""
+    |> regexReplace "<div4 .*?type=\"Proof\"" "<div class=\"perseus-proof\""
+    |> regexReplace "<div4 .*?type=\"QED\"" "<div class=\"perseus-qed\""
+    |> regexReplace "<div4 .*?type=\"porism\"" "<div class=\"perseus-porism\""
+    |> regexReplace "<div4 .*?type=\"lemma\"" "<div class=\"perseus-lemma\""
     |> regexReplace "</div4>" "</div>"
     // |> regexReplace "<head>" "<div class=\"perseus-head\">"
     // |> regexReplace "</head>" "</div>"
@@ -82,17 +82,13 @@ let cleanHtml (raw: string) =
     |> regexReplace "</trailer>" "</span>"
     |> regexReplace "<pb n=\"\d+\" />" ""
     |> regexReplace "<lb n=\"\d+\" />" ""
-    // |> regexReplace "<hi rend=\"center\">" "<div class=\"perseus-center\">"
-    // |> regexReplace "<hi rend=\"bold\">" "<div class=\"perseus-bold\">"
-    // |> regexReplace "<hi rend=\"ital\">" "<div class=\"perseus-ital\">"
-    // |> regexReplace "</hi>" "</div>"
-    |> regexReplaceWith "<hi rend=\"(bold|italics)\">([\w.]+)</hi>" replaceHiWithSpan
-    |> regexReplaceWith "<hi rend=\"center\">(.+)</hi>" replaceHiWithDiv
+    |> regexReplaceWith "(?s)<hi rend=\"(bold|ital)\">(.+?)</hi>" replaceHiWithSpan
+    |> regexReplaceWith "(?s)<hi rend=\"center\">(.+?)</hi>" replaceHiWithDiv
     |> regexReplace "<p>" "<p class=\"perseus-p\">"
     |> regexReplace "<quote>" "“"
     |> regexReplace "</quote>" "”"
-    |> regexReplaceWith "<ref target=\"([\w\.]+)\" targOrder=\"U\">([\w\.,\- ]+)<\/ref>" replaceWithReference
-    |> regexReplaceWith "<foreign lang=\"(\w+)\">" replaceWithForeignSpan
+    |> regexReplaceWith "<ref target=\"([\w\.]+?)\" targOrder=\"U\">([\w\.,\- ]+?)<\/ref>" replaceWithReference
+    |> regexReplaceWith "<foreign lang=\"(\w+?)\">" replaceWithForeignSpan
     |> regexReplace "</foreign>" "</span>"
     |> removeNodesByName "note"
     |> failOnUnrecognizedElement
