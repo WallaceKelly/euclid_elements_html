@@ -14,6 +14,14 @@ module SectionType =
         | s when s.Contains("pro") -> Proposition
         | s when s.Contains("pos") -> Postulate
         | s -> failwith $"Could not parse section type for '{str}'."
+    
+    let toHtmlName = function
+        | Definition -> "def"
+        | Proposition -> "prop"
+        | CommonNotion -> "cn"
+        | Postulate -> "post"
+        | Lemma -> "lemma"
+        | Porism -> "porism"
 
 type Section =
     { Index: int

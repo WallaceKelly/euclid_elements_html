@@ -23,19 +23,13 @@ module BookNumber =
         else
             BookNumber n
 
+    let toInt =
+        function
+        | BookNumber n -> n
+
     let toRomanNumeral =
         function
         | BookNumber n -> romanNumerals[n]
-
-    let fromString (str: string) =
-        [ 13; 12; 11; 9; 10; 8; 7; 6; 4; 5; 3; 2; 1 ]
-        |> Seq.choose (fun n ->
-            if str.Contains(n.ToString()) then
-                Some(BookNumber n)
-            else
-                None)
-        |> Seq.tryHead
-        |> Option.defaultWith (fun _ -> failwith $"Cannot parse roman numeral from '${str}'.")
 
 type Book =
     { Number: BookNumber; TitleRaw: string }
@@ -45,6 +39,6 @@ module Book =
     let fromInt n =
         let bookNumber = BookNumber.fromInt n
         let bookTitle = $"Book {BookNumber.toRomanNumeral bookNumber}"
+
         { Number = bookNumber
           TitleRaw = bookTitle }
-

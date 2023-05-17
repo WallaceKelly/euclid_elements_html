@@ -9,8 +9,5 @@ type Element =
       IdRaw: string
       Book: Book
       Section: Section
-      SummaryRaw: string option
       ProofRaw: string option
-      ConclusionRaw: string option
-      DefinitionRaw: string option
       BodyRaw: string }
