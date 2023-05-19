@@ -5,5 +5,6 @@
 * ~~Parse the Element inside the PerseusXmlParsing.fsx~~
 * ~~Handle all the inconsistencies in the higher books by switching to XPath on the id=ele. pattern~~
 * ~~Remove unused code~~
+* Fix reference links, adding extension .html
 * Unify the use of toHtmlRef and createFilename?
 * Create PerseusId record?
